@@ -60,6 +60,7 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     //Calculating working Area.
     double fullVideoViewPortHeight = MediaQuery.of(context).size.height -
         kBottomNavigationBarHeight -
