@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
 
   Random random = new Random();
 
-  int currentIndex=0;
+  int currentIndex = 0;
 
   final List<String> urls = [
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
@@ -40,31 +40,35 @@ class _MyAppState extends State<MyApp> {
     return ScreenUtilInit(
         allowFontScaling: false,
         builder: () => MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          body: PageView.builder(
-            scrollDirection: Axis.vertical,
-              itemCount: urls.length,
-              onPageChanged: (page) {
-                print('Mypage $page');
-                print(currentIndex);
-              },
-              itemBuilder: (context, index) {
-                currentIndex = index;
-                return Align(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    color: colors[random.nextInt(3)],
-                    child: VideoAnimationTile(
-                      play: currentIndex == index,
-                      url: urls[index],
-                    ),
-                  ),
-                );
-              }),
-        ),
-      ),
-    ));
+              home: SafeArea(
+                child: Scaffold(body: Consumer<ScrollProvider>(
+                    builder: (context, myScrollProvider, child) {
+                  return PageView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: urls.length,
+                      physics: myScrollProvider.scrollable
+                          ? PageScrollPhysics()
+                          : NeverScrollableScrollPhysics(),
+                      onPageChanged: (page) {
+                        print('Mypage $page');
+                        print(currentIndex);
+                      },
+                      itemBuilder: (context, index) {
+                        currentIndex = index;
+                        return Align(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            color: colors[random.nextInt(3)],
+                            child: VideoAnimationTile(
+                              play: currentIndex == index,
+                              url: urls[index],
+                            ),
+                          ),
+                        );
+                      });
+                })),
+              ),
+            ));
   }
 }

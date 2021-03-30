@@ -51,6 +51,7 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     if(widget.play){
+      _betterPlayerController.setLooping(true);
       _betterPlayerController.play();
     }else{
       _betterPlayerController.pause();
