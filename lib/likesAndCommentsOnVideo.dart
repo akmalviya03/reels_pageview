@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'IconSvg.dart';
 
-class LikesAndComments extends StatelessWidget {
-  const LikesAndComments({
+class LikesAndCommentsOnVideo extends StatelessWidget {
+  const LikesAndCommentsOnVideo({
     Key key,
     @required this.iconSize,
   }) : super(key: key);

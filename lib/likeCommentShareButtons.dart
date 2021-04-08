@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:reels_pageview/scrollProvider.dart';
 import 'IconSvg.dart';
 import 'package:provider/provider.dart';
-class LikeCommentShare extends StatelessWidget {
-  const LikeCommentShare({
+class LikeCommentShareButtons extends StatelessWidget {
+  const LikeCommentShareButtons({
     Key key,
     @required this.iconSize,
     @required AnimationController controller,

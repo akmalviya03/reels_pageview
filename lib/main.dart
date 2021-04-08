@@ -23,7 +23,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List colors = [Colors.red, Colors.green, Colors.yellow];
 
   Random random = new Random();
 
@@ -33,42 +32,64 @@ class _MyAppState extends State<MyApp> {
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4',
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
   ];
 
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        allowFontScaling: false,
-        builder: () => MaterialApp(
-              home: SafeArea(
-                child: Scaffold(body: Consumer<ScrollProvider>(
-                    builder: (context, myScrollProvider, child) {
-                  return PageView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: urls.length,
-                      physics: myScrollProvider.scrollable
-                          ? PageScrollPhysics()
-                          : NeverScrollableScrollPhysics(),
-                      onPageChanged: (page) {
-                        print('Mypage $page');
-                        print(currentIndex);
-                      },
-                      itemBuilder: (context, index) {
-                        currentIndex = index;
-                        return Align(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            color: colors[random.nextInt(3)],
-                            child: VideoAnimationTile(
-                              play: currentIndex == index,
-                              url: urls[index],
-                            ),
-                          ),
-                        );
-                      });
-                })),
-              ),
-            ));
+      allowFontScaling: false,
+      builder: () => MaterialApp(
+        home: SafeArea(
+          child: Scaffold(
+            body: Consumer<ScrollProvider>(
+              builder: (context, myScrollProvider, child) {
+                return PageView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: urls.length,
+                  physics: myScrollProvider.scrollable
+                      ? PageScrollPhysics()
+                      : NeverScrollableScrollPhysics(),
+                  onPageChanged: (page) {
+                    print('Mypage $page');
+                    print(currentIndex);
+                  },
+                  itemBuilder: (context, index) {
+                    currentIndex = index;
+                    return Align(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        child: VideoAnimationTile(
+                          play: currentIndex == index,
+                          url: urls[index],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.business),
+                  label: 'Business',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.school),
+                  label: 'School',
+                ),
+              ],
+              backgroundColor: Colors.black,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

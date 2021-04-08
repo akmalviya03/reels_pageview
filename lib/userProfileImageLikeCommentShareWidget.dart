@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reels_pageview/userProfileImageAndName.dart';
 
-import 'likeCommentShare.dart';
-import 'likesAndComments.dart';
+import 'likeCommentShareButtons.dart';
+import 'likesAndCommentsOnVideo.dart';
 class UserProfileImageLikeCommentShare extends StatelessWidget {
   const UserProfileImageLikeCommentShare({
     Key key,
@@ -31,10 +31,10 @@ class UserProfileImageLikeCommentShare extends StatelessWidget {
             mainAxisAlignment:
             MainAxisAlignment.spaceBetween,
             children: [
-              LikeCommentShare(
+              LikeCommentShareButtons(
                   iconSize: iconsHeightAndWidth * 0.5,
                   controller: _controller),
-              LikesAndComments(
+              LikesAndCommentsOnVideo(
                   iconSize: iconsHeightAndWidth * 0.5)
             ],
           ),
