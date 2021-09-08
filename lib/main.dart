@@ -47,21 +47,16 @@ class _MyAppState extends State<MyApp> {
                 return PageView.builder(
                   scrollDirection: Axis.vertical,
                   itemCount: urls.length,
+                  pageSnapping: true,
                   physics: myScrollProvider.scrollable
                       ? PageScrollPhysics()
                       : NeverScrollableScrollPhysics(),
-                  onPageChanged: (page) {
-                    print('Mypage $page');
-                    print(currentIndex);
-                  },
                   itemBuilder: (context, index) {
-                    currentIndex = index;
                     return Align(
                       child: Container(
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
                         child: VideoAnimationTile(
-                          play: currentIndex == index,
                           url: urls[index],
                         ),
                       ),

@@ -4,12 +4,11 @@ import 'package:flutter_screenutil/screen_util.dart';
 import 'package:reels_pageview/userProfileImageLikeCommentShareWidget.dart';
 import 'package:reels_pageview/videoPlayerWithControls.dart';
 import 'allComments.dart';
-
+import 'package:visibility_detector/visibility_detector.dart';
 class VideoAnimationTile extends StatefulWidget {
   final String url;
-  final bool play;
   VideoAnimationTile(
-      {@required this.url,@required this.play});
+      {@required this.url});
   @override
   _VideoAnimationTileState createState() => _VideoAnimationTileState();
 }
@@ -50,12 +49,6 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
 
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
-    if(widget.play){
-      _betterPlayerController.setLooping(true);
-      _betterPlayerController.play();
-    }else{
-      _betterPlayerController.pause();
-    }
   }
 
   @override
@@ -66,57 +59,69 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
         kBottomNavigationBarHeight -
         ScreenUtil().statusBarHeight;
 
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: fullVideoViewPortHeight,
-      color: Colors.black,
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (_, Widget child) {
+    //This is
+    return VisibilityDetector(
+      key: Key(widget.url),
+      onVisibilityChanged: (visibilityInfo) {
+        if((visibilityInfo.visibleFraction * 100) > 70){
+          _betterPlayerController.play();
+        }
+        else{
+          _betterPlayerController.pause();
+        }
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: fullVideoViewPortHeight,
+        color: Colors.black,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (_, Widget child) {
 
-          //Calculating icons Height And Width For Responsiveness.
-          iconsHeightAndWidth = (fullVideoViewPortHeight * 1) * 0.05 -
-              (((fullVideoViewPortHeight * 1) * 0.05) / 2) *
-                  _controller.value;
+            //Calculating icons Height And Width For Responsiveness.
+            iconsHeightAndWidth = (fullVideoViewPortHeight * 1) * 0.05 -
+                (((fullVideoViewPortHeight * 1) * 0.05) / 2) *
+                    _controller.value;
 
-          return Column(
-            children: [
-              //Video Section
-              FittedBox(
-                fit: BoxFit.fill,
-                child: SizedBox(
-                  //Both Height and width are Responsible for viewport height and width change.
-                  height: fullVideoViewPortHeight -
-                      fullVideoViewPortHeight * 0.6 * _controller.value,
-                  width: MediaQuery.of(context).size.width-MediaQuery.of(context).size.width*0.6*_controller.value,
-                  child: AspectRatio(
-                    aspectRatio: 9/16,
-                    child: Stack(
-                      alignment: Alignment.center,
-                          children: [
-                            /*Volume 1 equal to 100% */
-                            VideoPlayerWithControls(
-                                betterPlayerController:
-                                    _betterPlayerController),
-                            UserProfileImageLikeCommentShare(
-                                iconsHeightAndWidth: iconsHeightAndWidth,
-                                controller: _controller),
-                          ],
-                        )
+            return Column(
+              children: [
+                //Video Section
+                FittedBox(
+                  fit: BoxFit.fill,
+                  child: SizedBox(
+                    //Both Height and width are Responsible for viewport height and width change.
+                    height: fullVideoViewPortHeight -
+                        fullVideoViewPortHeight * 0.6 * _controller.value,
+                    width: MediaQuery.of(context).size.width-MediaQuery.of(context).size.width*0.6*_controller.value,
+                    child: AspectRatio(
+                      aspectRatio: 9/16,
+                      child: Stack(
+                        alignment: Alignment.center,
+                            children: [
+                              /*Volume 1 equal to 100% */
+                              VideoPlayerWithControls(
+                                  betterPlayerController:
+                                      _betterPlayerController),
+                              UserProfileImageLikeCommentShare(
+                                  iconsHeightAndWidth: iconsHeightAndWidth,
+                                  controller: _controller),
+                            ],
+                          )
+                    ),
                   ),
                 ),
-              ),
 
-              //All Comments
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: AllComments(
-                    fullVideoViewPortHeight: fullVideoViewPortHeight,
-                    controller: _controller),
-              ),
-            ],
-          );
-        },
+                //All Comments
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: AllComments(
+                      fullVideoViewPortHeight: fullVideoViewPortHeight,
+                      controller: _controller),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
