@@ -141,31 +141,31 @@ class AllComments extends StatelessWidget {
                         padding: EdgeInsets.only(left: 64),
                         child: Column(
                           children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.1,
-                                  height: MediaQuery.of(context).size.width *
-                                      0.004,
-                                  color: Colors.black,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
+                            InkWell(
+                              onTap: (){},
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width:
+                                          MediaQuery.of(context).size.width * 0.1,
+                                      height: MediaQuery.of(context).size.width *
+                                          0.004,
+                                      color: Colors.black,
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text(
                                       'Show previous replies',
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                             SizedBox(
                               height: 4,
@@ -233,6 +233,73 @@ class AllComments extends StatelessWidget {
                                                     fontSize: 12,
                                                     fontWeight:
                                                         FontWeight.w600),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Post Button
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.only(
+                                    right: 8, top: 2, bottom: 2,),
+                                  //UserImage
+                                  leading: CircleAvatar(
+                                    foregroundImage: NetworkImage(
+                                        'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
+                                  ),
+                                  // Add a comment
+                                  title: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                        color: Colors.black12,
+                                        borderRadius:
+                                        BorderRadius.circular(10)),
+                                    alignment: Alignment.topLeft,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Vrushank Shah',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          'Vrushank Shah',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              '1d ago',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {},
+                                              child: Text(
+                                                'Reply',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                    FontWeight.w600),
                                               ),
                                             ),
                                           ],
