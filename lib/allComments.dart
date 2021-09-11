@@ -98,27 +98,36 @@ class AllComments extends StatelessWidget {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600),
                                 ),
-                                SizedBox(height: 8,),
+                                SizedBox(
+                                  height: 8,
+                                ),
                                 Text(
                                   'Vrushank Shah',
                                   style: TextStyle(
-                                      fontSize: 14,),
+                                    fontSize: 14,
+                                  ),
                                 ),
-                                SizedBox(height: 8,),
+                                SizedBox(
+                                  height: 8,
+                                ),
                                 Row(
                                   children: [
                                     Text(
                                       '1d ago',
                                       style: TextStyle(
-                                        fontSize: 12,),
+                                        fontSize: 12,
+                                      ),
                                     ),
-                                    SizedBox(width: 8,),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
                                     GestureDetector(
-                                      onTap: (){},
+                                      onTap: () {},
                                       child: Text(
                                         'Reply',
                                         style: TextStyle(
-                                          fontSize: 12,fontWeight: FontWeight.w600),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600),
                                       ),
                                     ),
                                   ],
@@ -128,7 +137,40 @@ class AllComments extends StatelessWidget {
                           ),
                           // Post Button
                         ),
-                        SizedBox(height: 8,),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.15,
+                                height:
+                                    MediaQuery.of(context).size.width * 0.004,
+                                color: Colors.black,
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              InkWell(
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Show previous replies',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
                         ListView(
                           controller: _scrollController,
                           shrinkWrap: true,
@@ -162,27 +204,36 @@ class AllComments extends StatelessWidget {
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    SizedBox(height: 8,),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
                                     Text(
                                       'Vrushank Shah',
                                       style: TextStyle(
-                                        fontSize: 14,),
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                    SizedBox(height: 8,),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
                                     Row(
                                       children: [
                                         Text(
                                           '1d ago',
                                           style: TextStyle(
-                                            fontSize: 12,),
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                        SizedBox(width: 8,),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
                                         GestureDetector(
-                                          onTap: (){},
+                                          onTap: () {},
                                           child: Text(
                                             'Reply',
                                             style: TextStyle(
-                                                fontSize: 12,fontWeight: FontWeight.w600),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600),
                                           ),
                                         ),
                                       ],
