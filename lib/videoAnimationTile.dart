@@ -115,6 +115,7 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: AllComments(
+                    iconsHeightWidth: iconsHeightAndWidth,
                       fullVideoViewPortHeight: fullVideoViewPortHeight,
                       controller: _controller),
                 ),
