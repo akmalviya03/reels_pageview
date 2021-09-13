@@ -33,6 +33,7 @@ dependencies:
   websafe_svg: any
   provider: ^5.0.0
   visibility_detector: ^0.2.0
+  readmore: ^2.1.0
 
 dev_dependencies:
   flutter_test:

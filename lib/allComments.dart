@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:readmore/readmore.dart';
 import 'package:reels_pageview/scrollProvider.dart';
 
 class AllComments extends StatelessWidget {
@@ -90,17 +91,20 @@ class AllComments extends StatelessWidget {
                               Text(
                                 'Vrushank Shah',
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
+                                    fontSize: 14, fontWeight: FontWeight.w600),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                'Vrushank Shah',
+                              ReadMoreText(
+                                'Flutter is Google’s mobile UI open source framework to build high-quality native (super fast) interfaces for iOS and Android apps with the unified codebase.',
+                                trimLength: 100,
+                                lessStyle: TextStyle(
+                                    fontSize: 14, color: Colors.black,fontWeight: FontWeight.w600),
+                                moreStyle: TextStyle(
+                                    fontSize: 14, color: Colors.black,fontWeight: FontWeight.w600),
                                 style: TextStyle(
-                                  fontSize: 14,
-                                ),
+                                    fontSize: 14, color: Colors.black),
                               ),
                               SizedBox(
                                 height: 8,
@@ -135,6 +139,7 @@ class AllComments extends StatelessWidget {
                       SizedBox(
                         height: 4,
                       ),
+                      //Replies
                       Padding(
                         //padding calculated by Avatar Diameter + total padding around avatar
                         //40 + 16 + 8
@@ -142,16 +147,17 @@ class AllComments extends StatelessWidget {
                         child: Column(
                           children: [
                             InkWell(
-                              onTap: (){},
+                              onTap: () {},
                               child: Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: Row(
                                   children: [
                                     Container(
-                                      width:
-                                          MediaQuery.of(context).size.width * 0.1,
-                                      height: MediaQuery.of(context).size.width *
-                                          0.004,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.1,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.004,
                                       color: Colors.black,
                                     ),
                                     SizedBox(
@@ -178,7 +184,10 @@ class AllComments extends StatelessWidget {
                                 ListTile(
                                   dense: true,
                                   contentPadding: EdgeInsets.only(
-                                      right: 8, top: 2, bottom: 2,),
+                                    right: 8,
+                                    top: 2,
+                                    bottom: 2,
+                                  ),
                                   //UserImage
                                   leading: CircleAvatar(
                                     foregroundImage: NetworkImage(
@@ -205,12 +214,18 @@ class AllComments extends StatelessWidget {
                                         SizedBox(
                                           height: 8,
                                         ),
-                                        Text(
-                                          'Vrushank Shah',
+
+                                        ReadMoreText(
+                                          'Flutter is Google’s mobile UI open source framework to build high-quality native (super fast) interfaces for iOS and Android apps with the unified codebase.',
+                                          trimLength: 50,
+                                          lessStyle: TextStyle(
+                                              fontSize: 14, color: Colors.black,fontWeight: FontWeight.w600),
+                                          moreStyle: TextStyle(
+                                              fontSize: 14, color: Colors.black,fontWeight: FontWeight.w600),
                                           style: TextStyle(
-                                            fontSize: 14,
-                                          ),
+                                              fontSize: 14, color: Colors.black),
                                         ),
+
                                         SizedBox(
                                           height: 8,
                                         ),
@@ -245,7 +260,10 @@ class AllComments extends StatelessWidget {
                                 ListTile(
                                   dense: true,
                                   contentPadding: EdgeInsets.only(
-                                    right: 8, top: 2, bottom: 2,),
+                                    right: 8,
+                                    top: 2,
+                                    bottom: 2,
+                                  ),
                                   //UserImage
                                   leading: CircleAvatar(
                                     foregroundImage: NetworkImage(
@@ -272,12 +290,18 @@ class AllComments extends StatelessWidget {
                                         SizedBox(
                                           height: 8,
                                         ),
-                                        Text(
-                                          'Vrushank Shah',
+
+                                        ReadMoreText(
+                                          'Flutter is Google’s mobile UI open source framework to build high-quality native (super fast) interfaces for iOS and Android apps with the unified codebase.',
+                                          trimLength: 50,
+                                          lessStyle: TextStyle(
+                                              fontSize: 14, color: Colors.black,fontWeight: FontWeight.w600),
+                                          moreStyle: TextStyle(
+                                              fontSize: 14, color: Colors.black,fontWeight: FontWeight.w600),
                                           style: TextStyle(
-                                            fontSize: 14,
-                                          ),
+                                              fontSize: 14, color: Colors.black),
                                         ),
+
                                         SizedBox(
                                           height: 8,
                                         ),
@@ -318,7 +342,6 @@ class AllComments extends StatelessWidget {
                   ),
                 ),
               ),
-
               // Add a Comment Text field & Post Button
               Container(
                 color: Colors.white,
