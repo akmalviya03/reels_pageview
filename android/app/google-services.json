@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1097995118565",
+    "project_id": "comment-app-e4640",
+    "storage_bucket": "comment-app-e4640.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097995118565:android:a06e226b82ac621127310c",
+        "android_client_info": {
+          "package_name": "com.softelit.reels_pageview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097995118565-p8ak90qgifqov639arp2g3ctjqf2ga34.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRJmGqoj3hXC96HFKiSeMWa3ikKtTznQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097995118565-p8ak90qgifqov639arp2g3ctjqf2ga34.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

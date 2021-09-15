@@ -84,41 +84,42 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
                     _controller.value;
 
             return Column(
+              mainAxisSize: MainAxisSize.max,
               children: [
                 //Video Section
-                FittedBox(
-                  fit: BoxFit.fill,
-                  child: SizedBox(
-                    //Both Height and width are Responsible for viewport height and width change.
-                    height: fullVideoViewPortHeight -
-                        fullVideoViewPortHeight * 0.6 * _controller.value,
-                    width: MediaQuery.of(context).size.width-MediaQuery.of(context).size.width*0.6*_controller.value,
-                    child: AspectRatio(
-                      aspectRatio: 9/16,
-                      child: Stack(
-                        alignment: Alignment.center,
-                            children: [
-                              /*Volume 1 equal to 100% */
-                              VideoPlayerWithControls(
-                                  betterPlayerController:
-                                      _betterPlayerController),
-                              UserProfileImageLikeCommentShare(
-                                  iconsHeightAndWidth: iconsHeightAndWidth,
-                                  controller: _controller),
-                            ],
-                          )
+                Expanded(
+                  flex: 1,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: SizedBox(
+                      //Both Height and width are Responsible for viewport height and width change.
+                      height: fullVideoViewPortHeight -
+                          fullVideoViewPortHeight * 0.6 * _controller.value,
+                      width: MediaQuery.of(context).size.width-MediaQuery.of(context).size.width*0.6*_controller.value,
+                      child: AspectRatio(
+                        aspectRatio: 9/16,
+                        child: Stack(
+                          alignment: Alignment.center,
+                              children: [
+                                /*Volume 1 equal to 100% */
+                                VideoPlayerWithControls(
+                                    betterPlayerController:
+                                        _betterPlayerController),
+                                UserProfileImageLikeCommentShare(
+                                    iconsHeightAndWidth: iconsHeightAndWidth,
+                                    controller: _controller),
+                              ],
+                            )
+                      ),
                     ),
                   ),
                 ),
 
                 //All Comments
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: AllComments(
-                    iconsHeightWidth: iconsHeightAndWidth,
-                      fullVideoViewPortHeight: fullVideoViewPortHeight,
-                      controller: _controller),
-                ),
+                AllComments(
+                  iconsHeightWidth: iconsHeightAndWidth,
+                    fullVideoViewPortHeight: fullVideoViewPortHeight,
+                    controller: _controller),
               ],
             );
           },
