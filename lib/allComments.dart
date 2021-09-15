@@ -60,7 +60,7 @@ class AllComments extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: [
-                    CommentTitleWithAvatar(),
+                    CommentTitleWithAvatar(firebaseApi: _firebaseApi,),
                     SizedBox(
                       height: 4,
                     ),
@@ -107,7 +107,7 @@ class AllComments extends StatelessWidget {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: 1,
                             itemBuilder: (BuildContext context, int index) {
-                              return CommentTitleWithAvatar();
+                              return CommentTitleWithAvatar(firebaseApi: _firebaseApi,);
                             },
                           ),
                         ],
@@ -178,9 +178,10 @@ class AllComments extends StatelessWidget {
 
 class CommentTitleWithAvatar extends StatelessWidget {
   const CommentTitleWithAvatar({
-    Key key,
+    Key key,@required this.firebaseApi,
   }) : super(key: key);
 
+  final FirebaseApi firebaseApi;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -242,7 +243,9 @@ class CommentTitleWithAvatar extends StatelessWidget {
                   width: 8,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    firebaseApi.addReply(userId: "Someone",reply: "This is my first reply");
+                  },
                   child: Text(
                     'Reply',
                     style: TextStyle(
