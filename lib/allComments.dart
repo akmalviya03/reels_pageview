@@ -96,105 +96,86 @@ class _AllCommentsState extends State<AllComments>
             ),
           ),
 
-          Expanded(
-            child: StreamBuilder(
-              stream: _firebaseApi.getComments(postId: widget.postId),
-              builder: (context, snapshot) {
-                if(snapshot.hasData){
-                return ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      children: [
-                        //Main Comment
-                        CommentTitleWithAvatar(
-                          userAvatar: snapshot.data.docs[index]['userAvatar'],
-                          userName: snapshot.data.docs[index]['userName'],
-                          comment: snapshot.data.docs[index]['comment'],
-                          //On Tap Of Reply Button
-                          onTap: () {
-                            //To get document id use snapshot.data.docs[index].id
-                            myReplyProvider.updateUserName(userName: snapshot.data.docs[index]['userName']);
-                            _replyAnimationController.forward();
-                            myReplyProvider.updateAutoFocus(setAutoFocus: true);
-                            focusNodeReply.requestFocus();
-                          },
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        //Show Previous Replies Button & Replies
-                        Padding(
-                          //padding calculated by Avatar Diameter + total padding around avatar
-                          //40 + 16
-                          padding: EdgeInsets.only(left: 56),
-                          child: Column(
+          //Show Comments When Comments Section is completely visible
+          Visibility(
+            visible: widget._controller.value == 1 ? true : false,
+            child: Expanded(
+              child: StreamBuilder(
+                  stream: _firebaseApi.getComments(postId: widget.postId),
+                  builder: (context, snapshotParentComment) {
+                    if (snapshotParentComment.hasData) {
+                      return ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        itemCount: snapshotParentComment.data.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
                             children: [
-                              //Show Previous Replies Button
-                              InkWell(
-                                onTap: () {},
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width * 0.1,
-                                        height: MediaQuery.of(context).size.width *
-                                            0.004,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Text(
-                                        'Show previous replies',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              //Main Comment
+                              CommentTitleWithAvatar(
+                                userAvatar: snapshotParentComment
+                                    .data.docs[index]['userAvatar'],
+                                userName: snapshotParentComment.data.docs[index]
+                                    ['userName'],
+                                comment: snapshotParentComment.data.docs[index]
+                                    ['comment'],
+                                //On Tap Of Reply Button
+                                onTap: () {
+                                  //To get document id use snapshot.data.docs[index].id
+                                  myReplyProvider.updateUserName(
+                                      userName: snapshotParentComment
+                                          .data.docs[index]['userName']);
+                                  _replyAnimationController.forward();
+                                  myReplyProvider.updateAutoFocus(
+                                      setAutoFocus: true);
+                                  focusNodeReply.requestFocus();
+                                },
                               ),
                               SizedBox(
                                 height: 4,
                               ),
-                              //Replies
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: 1,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return CommentTitleWithAvatar(
-                                    comment: "Some comment",
-                                    userAvatar:
-                                        'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                                    userName: "Vrushank Shah",
-                                    onTap: () {
-                                      myReplyProvider.updateUserName(
-                                          userName: "Vrushank Shah");
-                                        _replyAnimationController.forward();
-                                        myReplyProvider.updateAutoFocus(setAutoFocus: true);
-                                        focusNodeReply.requestFocus();
-                                      
-                                    },
-                                  );
-                                },
+                              //Show Previous Replies Button & Replies
+                              Padding(
+                                //padding calculated by Avatar Diameter + total padding around avatar
+                                //40 + 16
+                                padding: EdgeInsets.only(left: 56),
+                                child: Column(
+                                  children: [
+                                    //Show Previous Replies Button
+                                    //TODO: Add Previous Replies Functionality
+                                    //Replies
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: 1,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return CommentTitleWithAvatar(
+                                          comment: "Some comment",
+                                          userAvatar:
+                                              'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                                          userName: "Vrushank Shah",
+                                          onTap: () {
+                                            myReplyProvider.updateUserName(
+                                                userName: "Vrushank Shah");
+                                            _replyAnimationController.forward();
+                                            myReplyProvider.updateAutoFocus(
+                                                setAutoFocus: true);
+                                            focusNodeReply.requestFocus();
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );}
-                else{
-                  return Center(child: CircularProgressIndicator());
-                }
-              }
+                          );
+                        },
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  }),
             ),
           ),
           //Replying To User Alert With TextField For Comment And Reply
@@ -297,3 +278,34 @@ class _AllCommentsState extends State<AllComments>
     );
   }
 }
+
+// InkWell(
+//   onTap: () {},
+//   child: Padding(
+//     padding: EdgeInsets.all(8.0),
+//     child: Row(
+//       children: [
+//         Container(
+//           width:
+//               MediaQuery.of(context).size.width * 0.1,
+//           height: MediaQuery.of(context).size.width *
+//               0.004,
+//           color: Colors.black,
+//         ),
+//         SizedBox(
+//           width: 4,
+//         ),
+//         Text(
+//           'Show previous replies',
+//           style: TextStyle(
+//               fontSize: 12,
+//               color: Colors.black,
+//               fontWeight: FontWeight.w600),
+//         ),
+//       ],
+//     ),
+//   ),
+// ),
+// SizedBox(
+//   height: 4,
+// ),
