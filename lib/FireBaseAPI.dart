@@ -31,7 +31,7 @@ class FirebaseApi {
   Stream<QuerySnapshot> getReplies({String parentDocumentId}) {
     return firestore
         .collection('Comments')
-        .doc("Vtkg5wDlaNBXVlpNPGgx")
+        .doc(parentDocumentId)
         .collection("Replies")
         .snapshots();
 

@@ -143,27 +143,32 @@ class _AllCommentsState extends State<AllComments>
                                     //Show Previous Replies Button
                                     //TODO: Add Previous Replies Functionality
                                     //Replies
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: 1,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return CommentTitleWithAvatar(
-                                          comment: "Some comment",
-                                          userAvatar:
-                                              'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                                          userName: "Vrushank Shah",
-                                          onTap: () {
-                                            myReplyProvider.updateUserName(
-                                                userName: "Vrushank Shah");
-                                            _replyAnimationController.forward();
-                                            myReplyProvider.updateAutoFocus(
-                                                setAutoFocus: true);
-                                            focusNodeReply.requestFocus();
+                                    StreamBuilder(
+                                      stream: _firebaseApi.getReplies(parentDocumentId: snapshotParentComment.data.docs[index].id),
+                                      builder: (context, snapshot) {
+                                        return ListView.builder(
+                                          shrinkWrap: true,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemCount: snapshotParentComment.data.docs.length,
+                                          itemBuilder:
+                                              (BuildContext context, int index) {
+                                            return CommentTitleWithAvatar(
+                                              comment: "Some comment",
+                                              userAvatar:
+                                                  'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                                              userName: "Vrushank Shah",
+                                              onTap: () {
+                                                myReplyProvider.updateUserName(
+                                                    userName: "Vrushank Shah");
+                                                _replyAnimationController.forward();
+                                                myReplyProvider.updateAutoFocus(
+                                                    setAutoFocus: true);
+                                                focusNodeReply.requestFocus();
+                                              },
+                                            );
                                           },
                                         );
-                                      },
+                                      }
                                     ),
                                   ],
                                 ),
