@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 
-import 'FireBaseAPI.dart';
-
 class CommentTitleWithAvatar extends StatelessWidget {
   const CommentTitleWithAvatar({
-    Key key,@required this.firebaseApi,@required this.replyAnimationController,@required this.focusNodeReply,
+    Key key,
+    @required this.userName,
+    @required this.userAvatar,
+    @required this.comment,@required this.onTap,
   }) : super(key: key);
 
-  final FirebaseApi firebaseApi;
-  final AnimationController replyAnimationController;
-  final FocusNode focusNodeReply;
+  final String comment;
+  final String userAvatar;
+  final String userName;
+  final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -23,7 +25,7 @@ class CommentTitleWithAvatar extends StatelessWidget {
       //UserImage
       leading: CircleAvatar(
         foregroundImage: NetworkImage(
-            'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
+            userAvatar),
       ),
       // Add a comment
       title: Container(
@@ -38,14 +40,14 @@ class CommentTitleWithAvatar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Vrushank Shah',
+              userName,
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             SizedBox(
               height: 8,
             ),
             ReadMoreText(
-              'Flutter is Google’s mobile UI open source framework to build high-quality native (super fast) interfaces for iOS and Android apps with the unified codebase.',
+              comment,
               trimLength: 100,
               lessStyle: TextStyle(
                   fontSize: 14,
@@ -72,11 +74,7 @@ class CommentTitleWithAvatar extends StatelessWidget {
                   width: 8,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    replyAnimationController.forward();
-                    replyAnimationController.value <= 0.1 ? focusNodeReply.requestFocus() : null;
-                    //firebaseApi.addReply(userId: "Someone",reply: "This is my first reply");
-                  },
+                  onTap: onTap,
                   child: Text(
                     'Reply',
                     style: TextStyle(

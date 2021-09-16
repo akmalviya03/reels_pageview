@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reels_pageview/replyProvider.dart';
 import 'package:reels_pageview/scrollProvider.dart';
+import 'AddReplyOrCommentAvatarTextFiledPostButton.dart';
 import 'CommentTitleWithAvatar.dart';
 import 'FireBaseAPI.dart';
 
@@ -10,13 +12,13 @@ class AllComments extends StatefulWidget {
     Key key,
     @required this.fullVideoViewPortHeight,
     @required AnimationController controller,
-    this.iconsHeightWidth,
+    @required this.postId,
   })  : _controller = controller,
         super(key: key);
 
+  final String postId;
   final double fullVideoViewPortHeight;
   final AnimationController _controller;
-  final double iconsHeightWidth;
 
   @override
   _AllCommentsState createState() => _AllCommentsState();
@@ -24,29 +26,29 @@ class AllComments extends StatefulWidget {
 
 class _AllCommentsState extends State<AllComments>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _commentsController = TextEditingController();
-
-  final ScrollController _scrollController = new ScrollController();
-
+  final TextEditingController _commentsTextEditingController =
+      TextEditingController();
+  final TextEditingController _repliesTextEditingController =
+      TextEditingController();
   final FirebaseApi _firebaseApi = new FirebaseApi();
-
-  AnimationController _replyController;
-
-   FocusNode focusNodeReply ;
-  FocusNode focusNodeComment ;
+  AnimationController _replyAnimationController;
+  FocusNode focusNodeReply;
+  FocusNode focusNodeComment;
 
   @override
   void initState() {
     super.initState();
     focusNodeReply = FocusNode();
     focusNodeComment = FocusNode();
-    _replyController =
+    focusNodeReply.unfocus();
+    focusNodeComment.unfocus();
+    _replyAnimationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
   }
 
   @override
   void dispose() {
-    _replyController.dispose();
+    _replyAnimationController.dispose();
     focusNodeReply.dispose();
     focusNodeComment.dispose();
     super.dispose();
@@ -56,7 +58,7 @@ class _AllCommentsState extends State<AllComments>
   Widget build(BuildContext context) {
     final myScrollProvider =
         Provider.of<ScrollProvider>(context, listen: false);
-    //Comments Section. Replace Content of Container according to your needs.
+    final myReplyProvider = Provider.of<ReplyProvider>(context, listen: false);
     return Container(
       color: Colors.white,
       height: widget.fullVideoViewPortHeight * 0.6 * widget._controller.value,
@@ -64,6 +66,7 @@ class _AllCommentsState extends State<AllComments>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          //Heading Comments With IconButton
           ListTile(
             contentPadding: EdgeInsets.symmetric(
               horizontal: 8,
@@ -80,6 +83,9 @@ class _AllCommentsState extends State<AllComments>
             trailing: IconButton(
               onPressed: () {
                 widget._controller.reverse(from: 1);
+                focusNodeReply.unfocus();
+                focusNodeComment.unfocus();
+                myReplyProvider.updateAutoFocus(setAutoFocus: false);
                 myScrollProvider.updateScrollable(scrollValue: true);
               },
               icon: Icon(
@@ -89,29 +95,39 @@ class _AllCommentsState extends State<AllComments>
               tooltip: 'Close',
             ),
           ),
+
           Expanded(
             child: ListView.builder(
-              controller: _scrollController,
               physics: BouncingScrollPhysics(),
               itemCount: 1,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: [
+                    //Main Comment
                     CommentTitleWithAvatar(
-                      focusNodeReply: focusNodeReply,
-                      firebaseApi: _firebaseApi,
-                      replyAnimationController: _replyController,
+                      userAvatar:
+                          'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                      userName: "Vrushank Shah",
+                      comment: "Some comment",
+                      //On Tap Of Reply Button
+                      onTap: () {
+                        //To get document id use snapshot.data.docs[index].id
+                        myReplyProvider.updateUserName(userName: "Abhishak");
+                        _replyAnimationController.forward();
+                        focusNodeReply.requestFocus();
+                      },
                     ),
                     SizedBox(
                       height: 4,
                     ),
-                    //Replies
+                    //Show Previous Replies Button & Replies
                     Padding(
                       //padding calculated by Avatar Diameter + total padding around avatar
                       //40 + 16
                       padding: EdgeInsets.only(left: 56),
                       child: Column(
                         children: [
+                          //Show Previous Replies Button
                           InkWell(
                             onTap: () {},
                             child: Padding(
@@ -142,16 +158,23 @@ class _AllCommentsState extends State<AllComments>
                           SizedBox(
                             height: 4,
                           ),
+                          //Replies
                           ListView.builder(
-                            controller: _scrollController,
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: 1,
                             itemBuilder: (BuildContext context, int index) {
                               return CommentTitleWithAvatar(
-                                focusNodeReply: focusNodeReply,
-                                firebaseApi: _firebaseApi,
-                                replyAnimationController: _replyController,
+                                comment: "Some comment",
+                                userAvatar:
+                                    'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                                userName: "Vrushank Shah",
+                                onTap: () {
+                                  myReplyProvider.updateUserName(
+                                      userName: "Vrushank Shah");
+                                  _replyAnimationController.forward();
+                                  focusNodeReply.requestFocus();
+                                },
                               );
                             },
                           ),
@@ -163,16 +186,20 @@ class _AllCommentsState extends State<AllComments>
               },
             ),
           ),
-          //Replying To Vrushank
+          //Replying To User Alert With TextField For Comment And Reply
           AnimatedBuilder(
-              animation: _replyController,
+              animation: _replyAnimationController,
               builder: (BuildContext context, Widget child) {
                 return Column(
                   children: [
+                    //Replying To User Alert
                     Offstage(
-                      offstage: _replyController.value <= 0.01 ? true : false,
+                      //Hiding Alert When Value is Less Than 0.01
+                      offstage: _replyAnimationController.value <= 0.01
+                          ? true
+                          : false,
                       child: Align(
-                        heightFactor: _replyController.value,
+                        heightFactor: _replyAnimationController.value,
                         child: ListTile(
                           dense: true,
                           contentPadding: EdgeInsets.symmetric(
@@ -181,13 +208,13 @@ class _AllCommentsState extends State<AllComments>
                           ),
                           // Add a comment
                           title: Text(
-                            'Replying To Vrushank',
+                            'Replying To ' + myReplyProvider.getUserName(),
                             style: TextStyle(fontSize: 14),
                           ),
                           // Post Button
                           trailing: IconButton(
                             onPressed: () {
-                              _replyController.reverse(from: 1);
+                              _replyAnimationController.reverse(from: 1);
                               focusNodeComment.requestFocus();
                             },
                             icon: Icon(
@@ -199,125 +226,61 @@ class _AllCommentsState extends State<AllComments>
                         ),
                       ),
                     ),
+
                     // Add a Comment Text field & Post Button
-                    Visibility(
-                      visible:  _replyController.value <= 0.01 ? true : false,
-                      child: ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        //UserImage
-                        leading: CircleAvatar(
-                          foregroundImage: NetworkImage(
-                              'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
-                        ),
-                        // Add a comment
-                        title: TextField(
-                          focusNode: focusNodeComment,
-                          controller: _commentsController,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
-                          maxLines: 2,
-                          minLines: 1,
-                          style: TextStyle(
-                            letterSpacing: 1.0,
-                            fontSize: widget.iconsHeightWidth * 0.9,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "Add a comment...",
-                            hintStyle: TextStyle(
-                              letterSpacing: 0.8,
-                              fontSize: 14,
-                            ),
-                            border: InputBorder.none,
-                          ),
-                          cursorColor: Colors.black,
-                        ),
-                        // Post Button
-                        trailing: TextButton(
-                          onPressed: () async {
-                            await _firebaseApi.addComment(
-                                userId: "Abhishak",
-                                postId: "Post001",
-                                comment: "Some Comment",
-                                timestamp: Timestamp.now());
-                          },
-                          child: Text(
-                            "Post",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Color(0xff396BBC),
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                        ),
-                      ),
+                    AddReplyOrCommentAvatarTextFiledPostButton(
+                      visible: _replyAnimationController.value <= 0.01
+                          ? true
+                          : false,
+                      focusNode: focusNodeComment,
+                      textEditingController: _commentsTextEditingController,
+                      userAvatar:
+                          'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                      hintText: "Add a comment...",
+                      onTap: () async {
+                        // if (_commentsTextEditingController.text.length != 0) {
+                        //   await _firebaseApi.addComment(
+                        //     userId: "UserId001",
+                        //     postId: "Post001",
+                        //     userAvatar:
+                        //         'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                        //     userName: "Vrushank",
+                        //     comment: _commentsTextEditingController.text,
+                        //     timestamp: Timestamp.now(),
+                        //   );
+                        //   _commentsTextEditingController.clear();
+                        // }
+                      },
                     ),
+
                     //AddReply
-                    Visibility(
-                      visible:  _replyController.value <= 0.01 ? false : true,
-                      child: ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        //UserImage
-                        leading: CircleAvatar(
-                          foregroundImage: NetworkImage(
-                              'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
-                        ),
-                        // Add a comment
-                        title: TextField(
-                          focusNode: focusNodeReply,
-                          autofocus: true,
-                          controller: _commentsController,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
-                          maxLines: 2,
-                          minLines: 1,
-                          style: TextStyle(
-                            letterSpacing: 1.0,
-                            fontSize: widget.iconsHeightWidth * 0.9,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "Add a reply...",
-                            hintStyle: TextStyle(
-                              letterSpacing: 0.8,
-                              fontSize: 14,
-                            ),
-                            border: InputBorder.none,
-                          ),
-                          cursorColor: Colors.black,
-                        ),
-                        // Post Button
-                        trailing: TextButton(
-                          onPressed: () async {
-                            // await _firebaseApi.addComment(
-                            //     userId: "Abhishak",
-                            //     postId: "Post001",
-                            //     comment: "Some Comment",
-                            //     timestamp: Timestamp.now());
-                          },
-                          child: Text(
-                            "Post",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Color(0xff396BBC),
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                        ),
-                      ),
+                    AddReplyOrCommentAvatarTextFiledPostButton(
+                      visible: _replyAnimationController.value <= 0.01
+                          ? false
+                          : true,
+                      focusNode: focusNodeReply,
+                      textEditingController: _repliesTextEditingController,
+                      userAvatar:
+                          'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                      hintText: "Add a reply...",
+                      onTap: () {
+                        //Document Id
+                        //Vtkg5wDlaNBXVlpNPGgx
+                        // _firebaseApi.addReply(
+                        //     timestamp: Timestamp.now(),
+                        //     documentId: "Vtkg5wDlaNBXVlpNPGgx",
+                        //     userId: "UserId001",
+                        //     postId: "Post001",
+                        //     userAvatar:
+                        //         'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                        //     userName: "Vrushank",
+                        //     reply: "My First Reply");
+                        // _replyAnimationController.reverse(from: 1);
+                      },
                     ),
                   ],
                 );
               }),
-
         ],
       ),
     );

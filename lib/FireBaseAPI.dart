@@ -6,31 +6,64 @@ class FirebaseApi {
   Future<void> addComment(
       {String userId,
       String postId,
+      String userName,
+      String userAvatar,
       String comment,
       Timestamp timestamp}) async {
     await firestore.collection('Comments').doc().set({
-      "userId": userId,
+      "timestamp": timestamp,
       "postId": postId,
+      "userId": userId,
+      "userAvatar": userAvatar,
+      "userName": userName,
       "comment": comment,
-      "timestamp": timestamp
     });
   }
 
-  Future<void> getComments() async {
-    await firestore.collection('Comments').get().then((value) => {
-          value.docs.forEach((element) {
-            print(element.reference.id);
-          })
-        });
+  Stream<QuerySnapshot> getComments()  {
+     return firestore.collection('Comments').snapshots();
+
+    // .then((value) {
+    // print(value.docs[0].data());
+    // });
+  }
+
+  Stream<QuerySnapshot> getReplies({String parentDocumentId})  {
+     return firestore.collection('Comments')
+        .doc("Vtkg5wDlaNBXVlpNPGgx")
+        .collection("Replies")
+        .snapshots();
+
+    // await firestore
+    //     .collection('Comments')
+    //     .doc("Vtkg5wDlaNBXVlpNPGgx")
+    //     .collection("Replies")
+    //     .get()
+    //     .then((value) {
+    //   print(value.docs[0].data());
+    // });
   }
 
   Future<void> addReply(
-      {String userId, String reply, Timestamp timestamp}) async {
+      {String userName,
+      String postId,
+      String userAvatar,
+      String userId,
+      String reply,
+      String documentId,
+      Timestamp timestamp}) async {
     await firestore
-        .collection('Comments')
-        .doc("mNgbfGGhH5Qo9SC5cUc2")
+        .collection("Comments")
+        .doc(documentId)
         .collection("Replies")
         .doc()
-        .set({"userId": userId, "comment": reply, "Timestamp": timestamp});
+        .set({
+      "timestamp": timestamp,
+      "postId": postId,
+      "userId": userId,
+      "userAvatar": userAvatar,
+      "userName": userName,
+      "reply": reply,
+    });
   }
 }

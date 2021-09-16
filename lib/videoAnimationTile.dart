@@ -5,16 +5,17 @@ import 'package:reels_pageview/userProfileImageLikeCommentShareWidget.dart';
 import 'package:reels_pageview/videoPlayerWithControls.dart';
 import 'allComments.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
 class VideoAnimationTile extends StatefulWidget {
   final String url;
-  VideoAnimationTile(
-      {@required this.url});
+  final String postId;
+  VideoAnimationTile({@required this.url, @required this.postId});
   @override
   _VideoAnimationTileState createState() => _VideoAnimationTileState();
 }
 
 class _VideoAnimationTileState extends State<VideoAnimationTile>
-    with SingleTickerProviderStateMixin,AutomaticKeepAliveClientMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   BetterPlayerController _betterPlayerController;
   AnimationController _controller;
   double iconsHeightAndWidth;
@@ -63,10 +64,9 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
     return VisibilityDetector(
       key: Key(widget.url),
       onVisibilityChanged: (visibilityInfo) {
-        if((visibilityInfo.visibleFraction * 100) > 70){
+        if ((visibilityInfo.visibleFraction * 100) > 70) {
           _betterPlayerController.play();
-        }
-        else{
+        } else {
           _betterPlayerController.pause();
         }
       },
@@ -77,7 +77,6 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
         child: AnimatedBuilder(
           animation: _controller,
           builder: (_, Widget child) {
-
             //Calculating icons Height And Width For Responsiveness.
             iconsHeightAndWidth = (fullVideoViewPortHeight * 1) * 0.05 -
                 (((fullVideoViewPortHeight * 1) * 0.05) / 2) *
@@ -95,31 +94,34 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
                       //Both Height and width are Responsible for viewport height and width change.
                       height: fullVideoViewPortHeight -
                           fullVideoViewPortHeight * 0.6 * _controller.value,
-                      width: MediaQuery.of(context).size.width-MediaQuery.of(context).size.width*0.6*_controller.value,
+                      width: MediaQuery.of(context).size.width -
+                          MediaQuery.of(context).size.width *
+                              0.6 *
+                              _controller.value,
                       child: AspectRatio(
-                        aspectRatio: 9/16,
-                        child: Stack(
-                          alignment: Alignment.center,
-                              children: [
-                                /*Volume 1 equal to 100% */
-                                VideoPlayerWithControls(
-                                    betterPlayerController:
-                                        _betterPlayerController),
-                                UserProfileImageLikeCommentShare(
-                                    iconsHeightAndWidth: iconsHeightAndWidth,
-                                    controller: _controller),
-                              ],
-                            )
-                      ),
+                          aspectRatio: 9 / 16,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              /*Volume 1 equal to 100% */
+                              VideoPlayerWithControls(
+                                  betterPlayerController:
+                                      _betterPlayerController),
+                              UserProfileImageLikeCommentShare(
+                                  iconsHeightAndWidth: iconsHeightAndWidth,
+                                  controller: _controller),
+                            ],
+                          )),
                     ),
                   ),
                 ),
 
                 //All Comments
                 AllComments(
-                  iconsHeightWidth: iconsHeightAndWidth,
-                    fullVideoViewPortHeight: fullVideoViewPortHeight,
-                    controller: _controller),
+                  fullVideoViewPortHeight: fullVideoViewPortHeight,
+                  controller: _controller,
+                  postId: widget.postId,
+                ),
               ],
             );
           },
