@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:readmore/readmore.dart';
 import 'package:reels_pageview/scrollProvider.dart';
+import 'CommentTitleWithAvatar.dart';
 import 'FireBaseAPI.dart';
 
-class AllComments extends StatelessWidget {
+class AllComments extends StatefulWidget {
   AllComments({
     Key key,
     @required this.fullVideoViewPortHeight,
@@ -16,9 +17,41 @@ class AllComments extends StatelessWidget {
   final double fullVideoViewPortHeight;
   final AnimationController _controller;
   final double iconsHeightWidth;
+
+  @override
+  _AllCommentsState createState() => _AllCommentsState();
+}
+
+class _AllCommentsState extends State<AllComments>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _commentsController = TextEditingController();
+
   final ScrollController _scrollController = new ScrollController();
+
   final FirebaseApi _firebaseApi = new FirebaseApi();
+
+  AnimationController _replyController;
+
+   FocusNode focusNodeReply ;
+  FocusNode focusNodeComment ;
+
+  @override
+  void initState() {
+    super.initState();
+    focusNodeReply = FocusNode();
+    focusNodeComment = FocusNode();
+    _replyController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
+  }
+
+  @override
+  void dispose() {
+    _replyController.dispose();
+    focusNodeReply.dispose();
+    focusNodeComment.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final myScrollProvider =
@@ -26,11 +59,16 @@ class AllComments extends StatelessWidget {
     //Comments Section. Replace Content of Container according to your needs.
     return Container(
       color: Colors.white,
-      height: fullVideoViewPortHeight * 0.6 * _controller.value,
+      height: widget.fullVideoViewPortHeight * 0.6 * widget._controller.value,
       width: MediaQuery.of(context).size.width,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 2,
+            ),
             title: Text(
               'Comments',
               style: TextStyle(
@@ -41,10 +79,9 @@ class AllComments extends StatelessWidget {
             ),
             trailing: IconButton(
               onPressed: () {
-                _controller.reverse(from: 1);
+                widget._controller.reverse(from: 1);
                 myScrollProvider.updateScrollable(scrollValue: true);
               },
-              padding: EdgeInsets.all(0),
               icon: Icon(
                 Icons.close,
               ),
@@ -60,15 +97,19 @@ class AllComments extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: [
-                    CommentTitleWithAvatar(firebaseApi: _firebaseApi,),
+                    CommentTitleWithAvatar(
+                      focusNodeReply: focusNodeReply,
+                      firebaseApi: _firebaseApi,
+                      replyAnimationController: _replyController,
+                    ),
                     SizedBox(
                       height: 4,
                     ),
                     //Replies
                     Padding(
                       //padding calculated by Avatar Diameter + total padding around avatar
-                      //40 + 8
-                      padding: EdgeInsets.only(left: 48),
+                      //40 + 16
+                      padding: EdgeInsets.only(left: 56),
                       child: Column(
                         children: [
                           InkWell(
@@ -107,7 +148,11 @@ class AllComments extends StatelessWidget {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: 1,
                             itemBuilder: (BuildContext context, int index) {
-                              return CommentTitleWithAvatar(firebaseApi: _firebaseApi,);
+                              return CommentTitleWithAvatar(
+                                focusNodeReply: focusNodeReply,
+                                firebaseApi: _firebaseApi,
+                                replyAnimationController: _replyController,
+                              );
                             },
                           ),
                         ],
@@ -118,148 +163,163 @@ class AllComments extends StatelessWidget {
               },
             ),
           ),
-          // Add a Comment Text field & Post Button
-          ListTile(
-            dense: true,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 2,
-            ),
-            //UserImage
-            leading: CircleAvatar(
-              foregroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
-            ),
-            // Add a comment
-            title: TextField(
-              controller: _commentsController,
-              keyboardType: TextInputType.text,
-              textCapitalization: TextCapitalization.sentences,
-              maxLines: 2,
-              minLines: 1,
-              style: TextStyle(
-                letterSpacing: 1.0,
-                fontSize: iconsHeightWidth * 0.9,
-              ),
-              decoration: InputDecoration(
-                hintText: "Add a comment...",
-                hintStyle: TextStyle(
-                  letterSpacing: 0.8,
-                  fontSize: 14,
-                ),
-                border: InputBorder.none,
-              ),
-              cursorColor: Colors.black,
-            ),
-            // Post Button
-            trailing: TextButton(
-              onPressed: () async {
-                await _firebaseApi.addComment(
-                    userId: "Abhishak",
-                    postId: "Post001",
-                    comment: "Some Comment");
-              },
-              child: Text(
-                "Post",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Color(0xff396BBC),
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ),
-          ),
+          //Replying To Vrushank
+          AnimatedBuilder(
+              animation: _replyController,
+              builder: (BuildContext context, Widget child) {
+                return Column(
+                  children: [
+                    Offstage(
+                      offstage: _replyController.value <= 0.01 ? true : false,
+                      child: Align(
+                        heightFactor: _replyController.value,
+                        child: ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          // Add a comment
+                          title: Text(
+                            'Replying To Vrushank',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          // Post Button
+                          trailing: IconButton(
+                            onPressed: () {
+                              _replyController.reverse(from: 1);
+                              focusNodeComment.requestFocus();
+                            },
+                            icon: Icon(
+                              Icons.close,
+                            ),
+                            color: Colors.black,
+                            tooltip: 'Close',
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Add a Comment Text field & Post Button
+                    Visibility(
+                      visible:  _replyController.value <= 0.01 ? true : false,
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        //UserImage
+                        leading: CircleAvatar(
+                          foregroundImage: NetworkImage(
+                              'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
+                        ),
+                        // Add a comment
+                        title: TextField(
+                          focusNode: focusNodeComment,
+                          controller: _commentsController,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
+                          maxLines: 2,
+                          minLines: 1,
+                          style: TextStyle(
+                            letterSpacing: 1.0,
+                            fontSize: widget.iconsHeightWidth * 0.9,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Add a comment...",
+                            hintStyle: TextStyle(
+                              letterSpacing: 0.8,
+                              fontSize: 14,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          cursorColor: Colors.black,
+                        ),
+                        // Post Button
+                        trailing: TextButton(
+                          onPressed: () async {
+                            await _firebaseApi.addComment(
+                                userId: "Abhishak",
+                                postId: "Post001",
+                                comment: "Some Comment",
+                                timestamp: Timestamp.now());
+                          },
+                          child: Text(
+                            "Post",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Color(0xff396BBC),
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    //AddReply
+                    Visibility(
+                      visible:  _replyController.value <= 0.01 ? false : true,
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        //UserImage
+                        leading: CircleAvatar(
+                          foregroundImage: NetworkImage(
+                              'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
+                        ),
+                        // Add a comment
+                        title: TextField(
+                          focusNode: focusNodeReply,
+                          autofocus: true,
+                          controller: _commentsController,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.sentences,
+                          maxLines: 2,
+                          minLines: 1,
+                          style: TextStyle(
+                            letterSpacing: 1.0,
+                            fontSize: widget.iconsHeightWidth * 0.9,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Add a reply...",
+                            hintStyle: TextStyle(
+                              letterSpacing: 0.8,
+                              fontSize: 14,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          cursorColor: Colors.black,
+                        ),
+                        // Post Button
+                        trailing: TextButton(
+                          onPressed: () async {
+                            // await _firebaseApi.addComment(
+                            //     userId: "Abhishak",
+                            //     postId: "Post001",
+                            //     comment: "Some Comment",
+                            //     timestamp: Timestamp.now());
+                          },
+                          child: Text(
+                            "Post",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Color(0xff396BBC),
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+
         ],
       ),
-    );
-  }
-}
-
-class CommentTitleWithAvatar extends StatelessWidget {
-  const CommentTitleWithAvatar({
-    Key key,@required this.firebaseApi,
-  }) : super(key: key);
-
-  final FirebaseApi firebaseApi;
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      dense: true,
-      horizontalTitleGap: 8,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 2,
-      ),
-      //UserImage
-      leading: CircleAvatar(
-        foregroundImage: NetworkImage(
-            'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
-      ),
-      // Add a comment
-      title: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.black12,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        alignment: Alignment.topLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Vrushank Shah',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            ReadMoreText(
-              'Flutter is Google’s mobile UI open source framework to build high-quality native (super fast) interfaces for iOS and Android apps with the unified codebase.',
-              trimLength: 100,
-              lessStyle: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xff396BBC),
-                  fontWeight: FontWeight.w600),
-              moreStyle: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xff396BBC),
-                  fontWeight: FontWeight.w600),
-              style: TextStyle(fontSize: 14, color: Colors.black),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                Text(
-                  '1d ago',
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    firebaseApi.addReply(userId: "Someone",reply: "This is my first reply");
-                  },
-                  child: Text(
-                    'Reply',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xff396BBC),
-                        fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      // Post Button
     );
   }
 }
