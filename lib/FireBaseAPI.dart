@@ -20,16 +20,17 @@ class FirebaseApi {
     });
   }
 
-  Stream<QuerySnapshot> getComments()  {
-     return firestore.collection('Comments').snapshots();
-
-    // .then((value) {
-    // print(value.docs[0].data());
-    // });
+  Stream<QuerySnapshot> getComments({String postId}) {
+    return firestore
+        .collection('Comments')
+        .where("postId", isEqualTo: postId)
+        .orderBy("timestamp")
+        .snapshots();
   }
 
-  Stream<QuerySnapshot> getReplies({String parentDocumentId})  {
-     return firestore.collection('Comments')
+  Stream<QuerySnapshot> getReplies({String parentDocumentId}) {
+    return firestore
+        .collection('Comments')
         .doc("Vtkg5wDlaNBXVlpNPGgx")
         .collection("Replies")
         .snapshots();
