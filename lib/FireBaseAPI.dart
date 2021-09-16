@@ -34,15 +34,6 @@ class FirebaseApi {
         .doc(parentDocumentId)
         .collection("Replies")
         .snapshots();
-
-    // await firestore
-    //     .collection('Comments')
-    //     .doc("Vtkg5wDlaNBXVlpNPGgx")
-    //     .collection("Replies")
-    //     .get()
-    //     .then((value) {
-    //   print(value.docs[0].data());
-    // });
   }
 
   Future<void> addReply(

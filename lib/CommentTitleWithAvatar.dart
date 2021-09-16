@@ -6,10 +6,10 @@ class CommentTitleWithAvatar extends StatelessWidget {
     Key key,
     @required this.userName,
     @required this.userAvatar,
-    @required this.comment,@required this.onTap,
+    @required this.commentOrReplyText,@required this.onTap,
   }) : super(key: key);
 
-  final String comment;
+  final String commentOrReplyText;
   final String userAvatar;
   final String userName;
   final VoidCallback onTap;
@@ -47,7 +47,7 @@ class CommentTitleWithAvatar extends StatelessWidget {
               height: 8,
             ),
             ReadMoreText(
-              comment,
+              commentOrReplyText,
               trimLength: 100,
               lessStyle: TextStyle(
                   fontSize: 14,

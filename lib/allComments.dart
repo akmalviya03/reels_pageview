@@ -107,23 +107,23 @@ class _AllCommentsState extends State<AllComments>
                       return ListView.builder(
                         physics: BouncingScrollPhysics(),
                         itemCount: snapshotParentComment.data.docs.length,
-                        itemBuilder: (BuildContext context, int index) {
+                        itemBuilder: (BuildContext context, int indexParent) {
                           return Column(
                             children: [
                               //Main Comment
                               CommentTitleWithAvatar(
                                 userAvatar: snapshotParentComment
-                                    .data.docs[index]['userAvatar'],
-                                userName: snapshotParentComment.data.docs[index]
-                                    ['userName'],
-                                comment: snapshotParentComment.data.docs[index]
-                                    ['comment'],
+                                    .data.docs[indexParent]['userAvatar'],
+                                userName: snapshotParentComment
+                                    .data.docs[indexParent]['userName'],
+                                commentOrReplyText: snapshotParentComment
+                                    .data.docs[indexParent]['comment'],
                                 //On Tap Of Reply Button
                                 onTap: () {
                                   //To get document id use snapshot.data.docs[index].id
                                   myReplyProvider.updateUserName(
                                       userName: snapshotParentComment
-                                          .data.docs[index]['userName']);
+                                          .data.docs[indexParent]['userName']);
                                   _replyAnimationController.forward();
                                   myReplyProvider.updateAutoFocus(
                                       setAutoFocus: true);
@@ -144,32 +144,58 @@ class _AllCommentsState extends State<AllComments>
                                     //TODO: Add Previous Replies Functionality
                                     //Replies
                                     StreamBuilder(
-                                      stream: _firebaseApi.getReplies(parentDocumentId: snapshotParentComment.data.docs[index].id),
-                                      builder: (context, snapshot) {
-                                        return ListView.builder(
-                                          shrinkWrap: true,
-                                          physics: NeverScrollableScrollPhysics(),
-                                          itemCount: snapshotParentComment.data.docs.length,
-                                          itemBuilder:
-                                              (BuildContext context, int index) {
-                                            return CommentTitleWithAvatar(
-                                              comment: "Some comment",
-                                              userAvatar:
-                                                  'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                                              userName: "Vrushank Shah",
-                                              onTap: () {
-                                                myReplyProvider.updateUserName(
-                                                    userName: "Vrushank Shah");
-                                                _replyAnimationController.forward();
-                                                myReplyProvider.updateAutoFocus(
-                                                    setAutoFocus: true);
-                                                focusNodeReply.requestFocus();
+                                        stream: _firebaseApi.getReplies(
+                                            parentDocumentId:
+                                                snapshotParentComment
+                                                    .data.docs[indexParent].id),
+                                        builder: (context, snapshotReplies) {
+                                          if (snapshotReplies.hasData) {
+                                            return ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount: snapshotReplies
+                                                  .data.docs.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int indexChild) {
+                                                return CommentTitleWithAvatar(
+                                                  userAvatar: snapshotReplies
+                                                          .data.docs[indexChild]
+                                                      ['userAvatar'],
+                                                  userName: snapshotReplies
+                                                          .data.docs[indexChild]
+                                                      ['userName'],
+                                                  commentOrReplyText:
+                                                      snapshotReplies.data
+                                                              .docs[indexChild]
+                                                          ['reply'],
+                                                  onTap: () {
+                                                    myReplyProvider.updateUserName(
+                                                        userName: snapshotReplies
+                                                                    .data.docs[
+                                                                indexChild]
+                                                            ['userName']);
+
+                                                    _replyAnimationController
+                                                        .forward();
+
+                                                    myReplyProvider
+                                                        .updateAutoFocus(
+                                                            setAutoFocus: true);
+
+                                                    focusNodeReply
+                                                        .requestFocus();
+                                                  },
+                                                );
                                               },
                                             );
-                                          },
-                                        );
-                                      }
-                                    ),
+                                          } else {
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+                                        }),
                                   ],
                                 ),
                               ),
@@ -204,10 +230,14 @@ class _AllCommentsState extends State<AllComments>
                             vertical: 2,
                           ),
                           // Add a comment
-                          title: Text(
-                            'Replying To ' + myReplyProvider.getUserName(),
-                            style: TextStyle(fontSize: 14),
-                          ),
+                          title: Consumer<ReplyProvider>(
+                              builder: (context, replyProvider, child) {
+                            return Text(
+                              'Replying To ' + replyProvider.getUserName(),
+                              style: TextStyle(fontSize: 14),
+                            );
+                          }),
+
                           // Post Button
                           trailing: IconButton(
                             onPressed: () {
@@ -263,16 +293,16 @@ class _AllCommentsState extends State<AllComments>
                       onTap: () {
                         //Document Id
                         //Vtkg5wDlaNBXVlpNPGgx
-                        // _firebaseApi.addReply(
-                        //     timestamp: Timestamp.now(),
-                        //     documentId: "Vtkg5wDlaNBXVlpNPGgx",
-                        //     userId: "UserId001",
-                        //     postId: "Post001",
-                        //     userAvatar:
-                        //         'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                        //     userName: "Vrushank",
-                        //     reply: "My First Reply");
-                        // _replyAnimationController.reverse(from: 1);
+                        _firebaseApi.addReply(
+                            timestamp: Timestamp.now(),
+                            documentId: "U0lqV3xoq57Nn8wrFx4i",
+                            userId: "UserId001",
+                            postId: "Post001",
+                            userAvatar:
+                                'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                            userName: "Vrushank",
+                            reply: "My First Reply");
+                        _replyAnimationController.reverse(from: 1);
                       },
                     ),
                   ],
