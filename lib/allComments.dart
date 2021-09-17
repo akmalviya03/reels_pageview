@@ -121,42 +121,26 @@ class _AllCommentsState extends State<AllComments>
                             children: [
                               //Main Comment
                               CommentTitleWithAvatar(
-                                userAvatar: snapshotParentComment
-                                    .data.docs[indexParent]['userAvatar'],
-                                userName: snapshotParentComment
-                                    .data.docs[indexParent]['userName'],
-                                commentOrReplyText: snapshotParentComment
-                                    .data.docs[indexParent]['comment'],
+                                userAvatar: snapshotParentComment.data.docs[indexParent]['userAvatar'],
+                                userName: snapshotParentComment.data.docs[indexParent]['userName'],
+                                commentOrReplyText: snapshotParentComment.data.docs[indexParent]['comment'],
                                 //On Tap Of Reply Button
                                 onTap: () {
                                   //To get document id use snapshot.data.docs[index].id
-                                  myReplyProvider
-                                      .updateUserNameAndParentDocumentId(
-                                          userName: snapshotParentComment
-                                                  .data.docs[indexParent][
-                                              'userName'],
-                                          parentDocumentId:
-                                              snapshotParentComment
-                                                  .data.docs[indexParent].id);
+                                  myReplyProvider.updateUserNameAndParentDocumentId(userName: snapshotParentComment.data.docs[indexParent]['userName'], parentDocumentId: snapshotParentComment.data.docs[indexParent].id);
 
                                   _replyAnimationController.forward();
-                                  myReplyProvider.updateAutoFocus(
-                                      setAutoFocus: true);
+                                  myReplyProvider.updateAutoFocus(setAutoFocus: true);
                                   focusNodeReply.requestFocus();
                                 },
                                 onLongPress: () {
-                                  if (snapshotParentComment
-                                          .data.docs[indexParent]['userId'] ==
-                                      widget.userId) {
+                                  if (snapshotParentComment.data.docs[indexParent]['userId'] == widget.userId) {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return DeleteAlertDialog(
                                           onTapDelete: () {
-                                            _firebaseApi.deleteParentComment(
-                                                deleteParentDocumentId:
-                                                    snapshotParentComment.data
-                                                        .docs[indexParent].id);
+                                            _firebaseApi.deleteParentComment(deleteParentDocumentId: snapshotParentComment.data.docs[indexParent].id);
                                             Navigator.of(context).pop();
                                           },
                                         );
@@ -180,82 +164,36 @@ class _AllCommentsState extends State<AllComments>
                                     //Replies
                                     StreamBuilder(
                                         stream: _firebaseApi.getReplies(
-                                            parentDocumentId:
-                                                snapshotParentComment
-                                                    .data.docs[indexParent].id),
+                                            parentDocumentId: snapshotParentComment.data.docs[indexParent].id),
                                         builder: (context, snapshotReplies) {
                                           if (snapshotReplies.hasData) {
                                             return ListView.builder(
                                               shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: snapshotReplies
-                                                  .data.docs.length,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int indexChild) {
+                                              physics: NeverScrollableScrollPhysics(),
+                                              itemCount: snapshotReplies.data.docs.length,
+                                              itemBuilder: (BuildContext context, int indexChild) {
                                                 return CommentTitleWithAvatar(
-                                                  userAvatar: snapshotReplies
-                                                          .data.docs[indexChild]
-                                                      ['userAvatar'],
-                                                  userName: snapshotReplies
-                                                          .data.docs[indexChild]
-                                                      ['userName'],
+                                                  userAvatar: snapshotReplies.data.docs[indexChild]['userAvatar'],
+                                                  userName: snapshotReplies.data.docs[indexChild]['userName'],
                                                   commentOrReplyText:
-                                                      snapshotReplies.data
-                                                              .docs[indexChild]
-                                                          ['reply'],
+                                                      snapshotReplies.data.docs[indexChild]['reply'],
                                                   onTap: () {
                                                     myReplyProvider.updateUserNameAndParentDocumentId(
-                                                        userName: snapshotReplies
-                                                                    .data.docs[
-                                                                indexChild]
-                                                            ['userName'],
-                                                        parentDocumentId:
-                                                            snapshotParentComment
-                                                                .data
-                                                                .docs[
-                                                                    indexParent]
-                                                                .id);
-
-                                                    _replyAnimationController
-                                                        .forward();
-
-                                                    myReplyProvider
-                                                        .updateAutoFocus(
-                                                            setAutoFocus: true);
-
-                                                    focusNodeReply
-                                                        .requestFocus();
+                                                        userName: snapshotReplies.data.docs[indexChild]['userName'],
+                                                        parentDocumentId: snapshotParentComment.data.docs[indexParent].id);
+                                                    _replyAnimationController.forward();
+                                                    myReplyProvider.updateAutoFocus(setAutoFocus: true);
+                                                    focusNodeReply.requestFocus();
                                                   },
                                                   onLongPress: () {
-                                                    if (snapshotReplies
-                                                                    .data.docs[
-                                                                indexChild]
-                                                            ['userId'] ==
-                                                        widget.userId) {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
+                                                    if (snapshotReplies.data.docs[indexChild]['userId'] == widget.userId) {
+                                                      showDialog(context: context, builder: (BuildContext context) {
                                                           return DeleteAlertDialog(
                                                             onTapDelete: () {
                                                               _firebaseApi.deleteAReply(
-                                                                  deleteParentDocumentId:
-                                                                      snapshotParentComment
-                                                                          .data
-                                                                          .docs[
-                                                                              indexParent]
-                                                                          .id,
-                                                                  deleteReplyDocumentId:
-                                                                      snapshotReplies
-                                                                          .data
-                                                                          .docs[
-                                                                              indexChild]
-                                                                          .id);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
+                                                                  deleteParentDocumentId: snapshotParentComment.data.docs[indexParent].id,
+                                                                  deleteReplyDocumentId: snapshotReplies.data.docs[indexChild].id);
+                                                              Navigator.of(context).pop();
                                                             },
                                                           );
                                                         },
