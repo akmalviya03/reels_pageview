@@ -205,6 +205,15 @@ class _AllCommentsState extends State<AllComments>
                                                     focusNodeReply
                                                         .requestFocus();
                                                   },
+                                                  onLongPress: () {
+                                                    if (snapshotReplies
+                                                                    .data.docs[
+                                                                indexChild]
+                                                            ['userId'] ==
+                                                        widget.userId) {
+
+                                                    }
+                                                  },
                                                 );
                                               },
                                             );

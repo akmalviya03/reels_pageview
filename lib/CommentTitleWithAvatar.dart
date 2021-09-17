@@ -6,16 +6,18 @@ class CommentTitleWithAvatar extends StatelessWidget {
     Key key,
     @required this.userName,
     @required this.userAvatar,
-    @required this.commentOrReplyText,@required this.onTap,
+    @required this.commentOrReplyText,@required this.onTap,@required this.onLongPress,
   }) : super(key: key);
 
   final String commentOrReplyText;
   final String userAvatar;
   final String userName;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onLongPress: onLongPress,
       dense: true,
       horizontalTitleGap: 8,
       contentPadding: EdgeInsets.symmetric(
