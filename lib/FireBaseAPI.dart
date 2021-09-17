@@ -28,6 +28,20 @@ class FirebaseApi {
         .snapshots();
   }
 
+  Future<void> deleteParentComment({String deleteParentDocumentId}) async {
+    await firestore.collection('Comments').doc(deleteParentDocumentId).delete();
+  }
+
+  Future<void> deleteAReply(
+      {String deleteParentDocumentId, String deleteReplyDocumentId}) async {
+    await firestore
+        .collection('Comments')
+        .doc(deleteParentDocumentId)
+        .collection("Replies")
+        .doc(deleteReplyDocumentId)
+        .delete();
+  }
+
   Stream<QuerySnapshot> getReplies({String parentDocumentId}) {
     return firestore
         .collection('Comments')

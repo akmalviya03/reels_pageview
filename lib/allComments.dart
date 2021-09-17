@@ -58,6 +58,8 @@ class _AllCommentsState extends State<AllComments>
     _replyAnimationController.dispose();
     focusNodeReply.dispose();
     focusNodeComment.dispose();
+    _commentsTextEditingController.dispose();
+    _repliesTextEditingController.dispose();
     super.dispose();
   }
 
@@ -149,9 +151,15 @@ class _AllCommentsState extends State<AllComments>
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return DeleteAlertDialog(onTapDelete: () {
-
-                                        },);
+                                        return DeleteAlertDialog(
+                                          onTapDelete: () {
+                                            _firebaseApi.deleteParentComment(
+                                                deleteParentDocumentId:
+                                                    snapshotParentComment.data
+                                                        .docs[indexParent].id);
+                                            Navigator.of(context).pop();
+                                          },
+                                        );
                                       },
                                     );
                                   }
@@ -228,10 +236,28 @@ class _AllCommentsState extends State<AllComments>
                                                         widget.userId) {
                                                       showDialog(
                                                         context: context,
-                                                        builder: (BuildContext context) {
-                                                          return DeleteAlertDialog(onTapDelete: () {
-
-                                                          },);
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return DeleteAlertDialog(
+                                                            onTapDelete: () {
+                                                              _firebaseApi.deleteAReply(
+                                                                  deleteParentDocumentId:
+                                                                      snapshotParentComment
+                                                                          .data
+                                                                          .docs[
+                                                                              indexParent]
+                                                                          .id,
+                                                                  deleteReplyDocumentId:
+                                                                      snapshotReplies
+                                                                          .data
+                                                                          .docs[
+                                                                              indexChild]
+                                                                          .id);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          );
                                                         },
                                                       );
                                                     }
@@ -358,7 +384,6 @@ class _AllCommentsState extends State<AllComments>
     );
   }
 }
-
 
 // InkWell(
 //   onTap: () {},
