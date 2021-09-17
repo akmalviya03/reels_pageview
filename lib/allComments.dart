@@ -5,6 +5,7 @@ import 'package:reels_pageview/replyProvider.dart';
 import 'package:reels_pageview/scrollProvider.dart';
 import 'AddReplyOrCommentAvatarTextFiledPostButton.dart';
 import 'CommentTitleWithAvatar.dart';
+import 'DeleteAlertDialog.dart';
 import 'FireBaseAPI.dart';
 
 class AllComments extends StatefulWidget {
@@ -141,6 +142,20 @@ class _AllCommentsState extends State<AllComments>
                                       setAutoFocus: true);
                                   focusNodeReply.requestFocus();
                                 },
+                                onLongPress: () {
+                                  if (snapshotParentComment
+                                          .data.docs[indexParent]['userId'] ==
+                                      widget.userId) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return DeleteAlertDialog(onTapDelete: () {
+
+                                        },);
+                                      },
+                                    );
+                                  }
+                                },
                               ),
                               SizedBox(
                                 height: 4,
@@ -211,7 +226,14 @@ class _AllCommentsState extends State<AllComments>
                                                                 indexChild]
                                                             ['userId'] ==
                                                         widget.userId) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return DeleteAlertDialog(onTapDelete: () {
 
+                                                          },);
+                                                        },
+                                                      );
                                                     }
                                                   },
                                                 );
@@ -336,6 +358,7 @@ class _AllCommentsState extends State<AllComments>
     );
   }
 }
+
 
 // InkWell(
 //   onTap: () {},
