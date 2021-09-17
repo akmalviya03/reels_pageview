@@ -121,6 +121,9 @@ class _VideoAnimationTileState extends State<VideoAnimationTile>
                   fullVideoViewPortHeight: fullVideoViewPortHeight,
                   controller: _controller,
                   postId: widget.postId,
+                  userId: "UID001",
+                  userAvatar: 'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                  userName: 'Vrushank Shah',
                 ),
               ],
             );

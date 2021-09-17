@@ -13,12 +13,18 @@ class AllComments extends StatefulWidget {
     @required this.fullVideoViewPortHeight,
     @required AnimationController controller,
     @required this.postId,
+    @required this.userId,
+    @required this.userAvatar,
+    @required this.userName,
   })  : _controller = controller,
         super(key: key);
 
-  final String postId;
   final double fullVideoViewPortHeight;
   final AnimationController _controller;
+  final String postId;
+  final String userId;
+  final String userAvatar;
+  final String userName;
 
   @override
   _AllCommentsState createState() => _AllCommentsState();
@@ -121,9 +127,15 @@ class _AllCommentsState extends State<AllComments>
                                 //On Tap Of Reply Button
                                 onTap: () {
                                   //To get document id use snapshot.data.docs[index].id
-                                  myReplyProvider.updateUserName(
-                                      userName: snapshotParentComment
-                                          .data.docs[indexParent]['userName']);
+                                  myReplyProvider
+                                      .updateUserNameAndParentDocumentId(
+                                          userName: snapshotParentComment
+                                                  .data.docs[indexParent][
+                                              'userName'],
+                                          parentDocumentId:
+                                              snapshotParentComment
+                                                  .data.docs[indexParent].id);
+
                                   _replyAnimationController.forward();
                                   myReplyProvider.updateAutoFocus(
                                       setAutoFocus: true);
@@ -171,11 +183,17 @@ class _AllCommentsState extends State<AllComments>
                                                               .docs[indexChild]
                                                           ['reply'],
                                                   onTap: () {
-                                                    myReplyProvider.updateUserName(
+                                                    myReplyProvider.updateUserNameAndParentDocumentId(
                                                         userName: snapshotReplies
                                                                     .data.docs[
                                                                 indexChild]
-                                                            ['userName']);
+                                                            ['userName'],
+                                                        parentDocumentId:
+                                                            snapshotParentComment
+                                                                .data
+                                                                .docs[
+                                                                    indexParent]
+                                                                .id);
 
                                                     _replyAnimationController
                                                         .forward();
@@ -261,17 +279,15 @@ class _AllCommentsState extends State<AllComments>
                           : false,
                       focusNode: focusNodeComment,
                       textEditingController: _commentsTextEditingController,
-                      userAvatar:
-                          'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+                      userAvatar: widget.userAvatar,
                       hintText: "Add a comment...",
                       onTap: () async {
                         if (_commentsTextEditingController.text.length != 0) {
                           await _firebaseApi.addComment(
-                            userId: "UserId001",
+                            userId: widget.userId,
                             postId: widget.postId,
-                            userAvatar:
-                                'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            userName: "Vrushank",
+                            userAvatar: widget.userAvatar,
+                            userName: widget.userName,
                             comment: _commentsTextEditingController.text,
                             timestamp: Timestamp.now(),
                           );
@@ -280,31 +296,29 @@ class _AllCommentsState extends State<AllComments>
                       },
                     ),
 
-                    //AddReply
+                    //Add a Reply Text Field & Post Button
                     AddReplyOrCommentAvatarTextFiledPostButton(
-                      visible: _replyAnimationController.value <= 0.01
-                          ? false
-                          : true,
-                      focusNode: focusNodeReply,
-                      textEditingController: _repliesTextEditingController,
-                      userAvatar:
-                          'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                      hintText: "Add a reply...",
-                      onTap: () {
-                        //Document Id
-                        //Vtkg5wDlaNBXVlpNPGgx
-                        _firebaseApi.addReply(
-                            timestamp: Timestamp.now(),
-                            documentId: "U0lqV3xoq57Nn8wrFx4i",
-                            userId: "UserId001",
-                            postId: "Post001",
-                            userAvatar:
-                                'https://images.unsplash.com/photo-1585675100414-add2e465a136?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            userName: "Vrushank",
-                            reply: "My First Reply");
-                        _replyAnimationController.reverse(from: 1);
-                      },
-                    ),
+                        visible: _replyAnimationController.value <= 0.01
+                            ? false
+                            : true,
+                        focusNode: focusNodeReply,
+                        textEditingController: _repliesTextEditingController,
+                        userAvatar: widget.userAvatar,
+                        hintText: "Add a reply...",
+                        onTap: () {
+                          if (_repliesTextEditingController.text.length != 0) {
+                            _firebaseApi.addReply(
+                                timestamp: Timestamp.now(),
+                                parentDocumentId:
+                                    myReplyProvider.getParentDocumentId(),
+                                userId: widget.userId,
+                                userAvatar: widget.userAvatar,
+                                userName: widget.userName,
+                                reply: _repliesTextEditingController.text);
+                          }
+                          _replyAnimationController.reverse(from: 1);
+                          _repliesTextEditingController.clear();
+                        }),
                   ],
                 );
               }),

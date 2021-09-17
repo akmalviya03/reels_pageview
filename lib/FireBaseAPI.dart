@@ -38,20 +38,18 @@ class FirebaseApi {
 
   Future<void> addReply(
       {String userName,
-      String postId,
       String userAvatar,
       String userId,
       String reply,
-      String documentId,
+      String parentDocumentId,
       Timestamp timestamp}) async {
     await firestore
         .collection("Comments")
-        .doc(documentId)
+        .doc(parentDocumentId)
         .collection("Replies")
         .doc()
         .set({
       "timestamp": timestamp,
-      "postId": postId,
       "userId": userId,
       "userAvatar": userAvatar,
       "userName": userName,
